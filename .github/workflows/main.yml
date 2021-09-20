@@ -15,7 +15,6 @@ jobs:
           #config: https://gist.githubusercontent.com/jdkato/171186055d382c6065273fe5a7eeeb61/raw/c6832996f5c77002142df70a3aa2be521fe747a7/.vale.ini
           files: __onlyModified
           exclude: |
-            !README.md
             !.github/**/*
           debug: true
         env:
