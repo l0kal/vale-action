@@ -129,7 +129,14 @@ export async function get(tmp: any, tok: string, dir: string): Promise<Input> {
       }
     });
 
-    args = args.concat(Array.from(names));
+    if (names.size === 0) {
+      core.warning(
+        `No files matched; falling back to 'none'.`
+      );
+      args.push('.git/HEAD');
+    } else {
+      args = args.concat(Array.from(names));
+    }
   } else if (files == 'all') {
     args.push('.');
   } else if (fs.existsSync(path.resolve(dir, files))) {
