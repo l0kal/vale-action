@@ -111,6 +111,7 @@ export async function get(tmp: any, tok: string, dir: string): Promise<Input> {
 
   // List of exclude files
   const exclude = core.getInput('exclude') ?? '!*';
+  logIfDebug(`Exclude: ${exclude}`);
   const excludePatterns = exclude.split('\n');
   
   // Figure out what we're supposed to lint:
@@ -123,6 +124,7 @@ export async function get(tmp: any, tok: string, dir: string): Promise<Input> {
 
     let names = new Set<string>();
     payload.forEach(file => {
+      logIfDebug(`FileName: ${file.name}, Excludepatterns: ${excludePatterns}`);
       if (fs.existsSync(file.name) && !isMatch(file.name, excludePatterns)) {
         names.add(file.name);
         modified[file.name] = file;
