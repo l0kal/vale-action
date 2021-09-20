@@ -2,7 +2,7 @@ import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 
 import * as fs from 'fs';
-import micromatch from 'micromatch';
+import {isMatch} from 'micromatch';
 import * as path from 'path';
 import * as request from 'request-promise-native';
 import {modifiedFiles, GHFile} from './git';
@@ -123,7 +123,7 @@ export async function get(tmp: any, tok: string, dir: string): Promise<Input> {
 
     let names = new Set<string>();
     payload.forEach(file => {
-      if (fs.existsSync(file.name) && !micromatch.isMatch(file.name, excludePatterns)) {
+      if (fs.existsSync(file.name) && !isMatch(file.name, excludePatterns)) {
         names.add(file.name);
         modified[file.name] = file;
       }
