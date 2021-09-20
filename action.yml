@@ -19,15 +19,19 @@ inputs:
     required: false
     default: all
 
+  exclude:
+    description: "New line separated string with micromatch patterns to exclude files"
+    required: false
+
   onlyAnnotateModifiedLines:
     description: Only post annotations on lines that have changed within a PR.
     required: false
-    default: 'false'
+    default: "false"
 
   debug:
-    description: 'Log debugging information to stdout'
+    description: "Log debugging information to stdout"
     required: false
-    default: 'false'
+    default: "false"
 
 runs:
   using: docker

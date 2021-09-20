@@ -33,6 +33,11 @@ jobs:
         config: https://raw.githubusercontent.com/errata-ai/vale/master/.vale.ini
 
         # Optional
+        exclude: |
+          !.github/**/*
+          !README.md
+
+        # Optional
         files: path/to/lint
       env:
         # Required
@@ -128,3 +133,5 @@ Due to the current [token permissions](https://help.github.com/en/articles/virtu
 this Action **CAN NOT** post annotations to PRs from forked repositories.
 
 This will likely be fixed by [toolkit/issues/186](https://github.com/actions/toolkit/issues/186).
+
+jasudjasd asdjansdjnas asdfsdf
