@@ -113,14 +113,14 @@ export async function get(tmp: any, tok: string, dir: string): Promise<Input> {
   const exclude = core.getInput('exclude') ?? '!*';
   logIfDebug(`Exclude: ${exclude}`);
   const excludePatterns = exclude.split('\n');
-  
+
   // Figure out what we're supposed to lint:
   const files = core.getInput('files');
   if (
     core.getInput('onlyAnnotateModifiedLines') != 'false' ||
     files == '__onlyModified'
   ) {
-    let payload = await modifiedFiles(); 
+    let payload = await modifiedFiles();
 
     let names = new Set<string>();
     payload.forEach(file => {
@@ -132,9 +132,7 @@ export async function get(tmp: any, tok: string, dir: string): Promise<Input> {
     });
 
     if (names.size === 0) {
-      core.warning(
-        `No files matched; falling back to 'none'.`
-      );
+      core.warning(`No files matched; falling back to 'none'.`);
       args.push('.git/HEAD');
     } else {
       args = args.concat(Array.from(names));
@@ -142,6 +140,10 @@ export async function get(tmp: any, tok: string, dir: string): Promise<Input> {
   } else if (files == 'all') {
     args.push('.');
   } else if (fs.existsSync(path.resolve(dir, files))) {
+    // dir is the workspace
+    // files is the actual list of files
+    logIfDebug(`files: ${files}`);
+
     args.push(files);
   } else {
     try {

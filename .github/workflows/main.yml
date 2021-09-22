@@ -16,6 +16,7 @@ jobs:
           files: __onlyModified
           exclude: |
             .github/**/*
+            README.md
           debug: true
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
