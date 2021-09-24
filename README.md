@@ -1,6 +1,6 @@
 # GitHub Actions + Vale
 
-> :octocat: The official GitHub Action for Vale -- install, manage, and run Vale with ease.
+> :octocat: Fork of official GitHub Action for Vale -- lints only modified files and has support for exclude files.
 
 <p align="center">
   <img width="50%" alt="A demo screenshot." src="https://user-images.githubusercontent.com/8785025/85236358-272d3680-b3d2-11ea-8793-0f45cb70189a.png">
@@ -36,9 +36,6 @@ jobs:
         exclude: |
           !.github/**/*
           !README.md
-
-        # Optional
-        files: path/to/lint
       env:
         # Required
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
@@ -105,5 +102,3 @@ Due to the current [token permissions](https://help.github.com/en/articles/virtu
 this Action **CAN NOT** post annotations to PRs from forked repositories.
 
 This will likely be fixed by [toolkit/issues/186](https://github.com/actions/toolkit/issues/186).
-
-typpopos is not a real word

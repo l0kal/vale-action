@@ -3,7 +3,6 @@ import * as exec from '@actions/exec';
 
 import * as fs from 'fs';
 import {isMatch} from 'micromatch';
-import * as path from 'path';
 import * as request from 'request-promise-native';
 import {modifiedFiles, GHFile} from './git';
 
@@ -111,12 +110,11 @@ export async function get(tmp: any, tok: string, dir: string): Promise<Input> {
 
   // List of exclude files
   const exclude = core.getInput('exclude') ?? '!*';
-  logIfDebug(`Exclude: ${exclude}`);
   const excludePatterns = exclude.split('\n');
 
   let payload = await modifiedFiles();
-
   let names = new Set<string>();
+
   payload.forEach(file => {
     logIfDebug(`FileName: ${file.name}, Excludepatterns: ${excludePatterns}`);
     if (fs.existsSync(file.name) && !isMatch(file.name, excludePatterns)) {
@@ -133,7 +131,6 @@ export async function get(tmp: any, tok: string, dir: string): Promise<Input> {
   }
 
   logIfDebug(`Vale set-up comeplete; using '${args}'.`);
-  logIfDebug(`Modified files to lint: ${names}`);
 
   return {
     token: tok,
