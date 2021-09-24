@@ -14,11 +14,6 @@ inputs:
     description: An externally-hosted configuration file to use.
     required: false
 
-  files:
-    description: 'The files to lint: "all" or "<some_folder>".'
-    required: false
-    default: all
-
   exclude:
     description: "New line separated string with micromatch patterns to exclude files"
     required: false
@@ -39,6 +34,5 @@ runs:
   args:
     - ${{ inputs.styles }}
     - ${{ inputs.config }}
-    - ${{ inputs.files }}
     - ${{ inputs.onlyAnnotateModifiedLines }}
     - ${{ inputs.debug }}
