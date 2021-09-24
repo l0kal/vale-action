@@ -14,9 +14,19 @@ inputs:
     description: An externally-hosted configuration file to use.
     required: false
 
+  files:
+    description: 'The files to lint: "all" or "<some_folder>".'
+    required: false
+    default: all
+
   exclude:
     description: "New line separated string with micromatch patterns to exclude files"
     required: false
+
+  onlyAnnotateModifiedLines:
+    description: Only post annotations on lines that have changed within a PR.
+    required: false
+    default: "false"
 
   debug:
     description: "Log debugging information to stdout"
