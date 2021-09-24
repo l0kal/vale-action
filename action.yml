@@ -29,4 +29,6 @@ runs:
   args:
     - ${{ inputs.styles }}
     - ${{ inputs.config }}
+    - ${{ inputs.files }}
+    - ${{ inputs.onlyAnnotateModifiedLines }}
     - ${{ inputs.debug }}
