@@ -34,7 +34,6 @@
     "@types/request-promise-native": "^1.0.17",
     "@types/tmp": "^0.1.0",
     "execa": "^3.2.0",
-    "fs": "0.0.1-security",
     "git-root-dir": "^1.0.2",
     "micromatch": "^4.0.4",
     "request": "^2.88.0",
