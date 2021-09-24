@@ -99,34 +99,6 @@ This configuration file can be hosted in another repo (as shown above), a GitHub
 1. Any multi-value entry in the local `.vale.ini` file (e.g., `BasedOnStyles`) will be combined with the remote entry.
 2. Any single-value entry in the local `.vale.ini` file (e.g., `MinAlertLevel`) will override the remote entry altogether.
 
-### `files` (default: `all`)
-
-`files` specifies where Vale will look for files to lint:
-
-```yaml
-with:
-  files: path/to/lint
-```
-
-You can supply this value one of three ways:
-
-- `files: all` (default): The repo's root directory; equivalent to calling `vale .`.
-
-- `files: __onlyModified`: Lint only files that have been modified within a PR.
-
-- `files: path/to/lint`: A single file or directory; equivalent to calling `vale path/to/lint`.
-
-- `files: '["input1", "input2"]'`: A list of file or directory arguments; equivalent to calling `vale input1 input2`.
-
-### `onlyAnnotateModifiedLines` (default: `false`)
-
-In case you want the action to only annotate lines that have been modified within a PR. This is helpful in case you're introducing vale to a repository that (still) has a lot of lints and don't want to overwhelm everyone.
-
-```yaml
-with:
-  onlyAnnotateModifiedLines: true
-```
-
 ## Limitations
 
 Due to the current [token permissions](https://help.github.com/en/articles/virtual-environments-for-github-actions#token-permissions),
@@ -135,4 +107,4 @@ this Action **CAN NOT** post annotations to PRs from forked repositories.
 This will likely be fixed by [toolkit/issues/186](https://github.com/actions/toolkit/issues/186).
 
 asdasdasdasd asdasd 213oiejasfdasdfn a;donf asdasdas d
-adasdasd 23423rafasdf 
+adasdasd 23423rafasdf  asdasd
