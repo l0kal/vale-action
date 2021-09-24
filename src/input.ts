@@ -133,7 +133,7 @@ export async function get(tmp: any, tok: string, dir: string): Promise<Input> {
   }
 
   logIfDebug(`Vale set-up comeplete; using '${args}'.`);
-  logIfDebug(`Modified files to lint: ${modified}`);
+  logIfDebug(`Modified files to lint: ${names}`);
 
   return {
     token: tok,
