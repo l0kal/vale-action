@@ -114,49 +114,22 @@ export async function get(tmp: any, tok: string, dir: string): Promise<Input> {
   logIfDebug(`Exclude: ${exclude}`);
   const excludePatterns = exclude.split('\n');
 
-  // Figure out what we're supposed to lint:
-  const files = core.getInput('files');
-  if (
-    core.getInput('onlyAnnotateModifiedLines') != 'false' ||
-    files == '__onlyModified'
-  ) {
-    let payload = await modifiedFiles();
+  let payload = await modifiedFiles();
 
-    let names = new Set<string>();
-    payload.forEach(file => {
-      logIfDebug(`FileName: ${file.name}, Excludepatterns: ${excludePatterns}`);
-      if (fs.existsSync(file.name) && !isMatch(file.name, excludePatterns)) {
-        names.add(file.name);
-        modified[file.name] = file;
-      }
-    });
-
-    if (names.size === 0) {
-      core.warning(`No files matched; falling back to 'none'.`);
-      args.push('.git/HEAD');
-    } else {
-      args = args.concat(Array.from(names));
+  let names = new Set<string>();
+  payload.forEach(file => {
+    logIfDebug(`FileName: ${file.name}, Excludepatterns: ${excludePatterns}`);
+    if (fs.existsSync(file.name) && !isMatch(file.name, excludePatterns)) {
+      names.add(file.name);
+      modified[file.name] = file;
     }
-  } else if (files == 'all') {
-    args.push('.');
-  } else if (fs.existsSync(path.resolve(dir, files))) {
-    // dir is the workspace
-    // files is the actual list of files
-    logIfDebug(`files: ${files}`);
+  });
 
-    args.push(files);
+  if (names.size === 0) {
+    core.warning(`No files matched; falling back to 'none'.`);
+    args.push('.git/HEAD');
   } else {
-    try {
-      // Support for an array of inputs.
-      //
-      // e.g., '[".github/workflows/main.yml"]'
-      args = args.concat(JSON.parse(files));
-    } catch (e) {
-      core.warning(
-        `User-specified path (${files}) is invalid; falling back to 'all'.`
-      );
-      args.push('.');
-    }
+    args = args.concat(Array.from(names));
   }
 
   logIfDebug(`Vale set-up comeplete; using '${args}'.`);
