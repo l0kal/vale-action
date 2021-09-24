@@ -29,9 +29,13 @@
     "@actions/core": "^1.2.6",
     "@actions/exec": "^1.0.0",
     "@actions/github": "^3.0.0",
+    "@types/git-root-dir": "^1.0.0",
+    "@types/micromatch": "^4.0.2",
     "@types/request-promise-native": "^1.0.17",
     "@types/tmp": "^0.1.0",
     "execa": "^3.2.0",
+    "git-root-dir": "^1.0.2",
+    "micromatch": "^4.0.4",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7",
     "tmp": "^0.1.0"

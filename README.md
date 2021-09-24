@@ -1,6 +1,6 @@
 # GitHub Actions + Vale
 
-> :octocat: The official GitHub Action for Vale -- install, manage, and run Vale with ease.
+> :octocat: Fork of official GitHub Action for Vale -- lints only modified files and has support for exclude files.
 
 <p align="center">
   <img width="50%" alt="A demo screenshot." src="https://user-images.githubusercontent.com/8785025/85236358-272d3680-b3d2-11ea-8793-0f45cb70189a.png">
@@ -33,7 +33,9 @@ jobs:
         config: https://raw.githubusercontent.com/errata-ai/vale/master/.vale.ini
 
         # Optional
-        files: path/to/lint
+        exclude: |
+          !.github/**/*
+          !README.md
       env:
         # Required
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
@@ -93,34 +95,6 @@ This configuration file can be hosted in another repo (as shown above), a GitHub
 
 1. Any multi-value entry in the local `.vale.ini` file (e.g., `BasedOnStyles`) will be combined with the remote entry.
 2. Any single-value entry in the local `.vale.ini` file (e.g., `MinAlertLevel`) will override the remote entry altogether.
-
-### `files` (default: `all`)
-
-`files` specifies where Vale will look for files to lint:
-
-```yaml
-with:
-  files: path/to/lint
-```
-
-You can supply this value one of three ways:
-
-- `files: all` (default): The repo's root directory; equivalent to calling `vale .`.
-
-- `files: __onlyModified`: Lint only files that have been modified within a PR.
-
-- `files: path/to/lint`: A single file or directory; equivalent to calling `vale path/to/lint`.
-
-- `files: '["input1", "input2"]'`: A list of file or directory arguments; equivalent to calling `vale input1 input2`.
-
-### `onlyAnnotateModifiedLines` (default: `false`)
-
-In case you want the action to only annotate lines that have been modified within a PR. This is helpful in case you're introducing vale to a repository that (still) has a lot of lints and don't want to overwhelm everyone.
-
-```yaml
-with:
-  onlyAnnotateModifiedLines: true
-```
 
 ## Limitations
 

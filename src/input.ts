@@ -2,7 +2,7 @@ import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 
 import * as fs from 'fs';
-import * as path from 'path';
+import {isMatch} from 'micromatch';
 import * as request from 'request-promise-native';
 import {modifiedFiles, GHFile} from './git';
 
@@ -108,39 +108,26 @@ export async function get(tmp: any, tok: string, dir: string): Promise<Input> {
     }
   }
 
-  // Figure out what we're supposed to lint:
-  const files = core.getInput('files');
-  if (
-    core.getInput('onlyAnnotateModifiedLines') != 'false' ||
-    files == '__onlyModified'
-  ) {
-    let payload = await modifiedFiles();
+  // List of exclude files
+  const exclude = core.getInput('exclude') ?? '!*';
+  const excludePatterns = exclude.split('\n');
 
-    let names = new Set<string>();
-    payload.forEach(file => {
-      if (fs.existsSync(file.name)) {
-        names.add(file.name);
-        modified[file.name] = file;
-      }
-    });
+  let payload = await modifiedFiles();
+  let names = new Set<string>();
 
-    args = args.concat(Array.from(names));
-  } else if (files == 'all') {
-    args.push('.');
-  } else if (fs.existsSync(path.resolve(dir, files))) {
-    args.push(files);
-  } else {
-    try {
-      // Support for an array of inputs.
-      //
-      // e.g., '[".github/workflows/main.yml"]'
-      args = args.concat(JSON.parse(files));
-    } catch (e) {
-      core.warning(
-        `User-specified path (${files}) is invalid; falling back to 'all'.`
-      );
-      args.push('.');
+  payload.forEach(file => {
+    logIfDebug(`FileName: ${file.name}, Excludepatterns: ${excludePatterns}`);
+    if (fs.existsSync(file.name) && !isMatch(file.name, excludePatterns)) {
+      names.add(file.name);
+      modified[file.name] = file;
     }
+  });
+
+  if (names.size === 0) {
+    core.warning(`No files matched; falling back to 'none'.`);
+    args.push('.git/HEAD');
+  } else {
+    args = args.concat(Array.from(names));
   }
 
   logIfDebug(`Vale set-up comeplete; using '${args}'.`);
