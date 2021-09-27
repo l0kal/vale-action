@@ -21,7 +21,7 @@ interface ValeJSON {
   readonly [propName: string]: ReadonlyArray<Alert>;
 }
 
-interface Stats {
+export interface Stats {
   suggestions: number;
   warnings: number;
   errors: number;
@@ -60,6 +60,10 @@ export class CheckRunner {
       errors: 0
     };
     this.modified = modified;
+  }
+
+  public getCheckResult(): Stats {
+    return {...this.stats};
   }
 
   /**

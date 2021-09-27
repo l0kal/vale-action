@@ -23,6 +23,15 @@ inputs:
     required: false
     default: "false"
 
+  passCondition:
+    description: |
+      Pass condition that is required for action not to fail.
+      Syntax: errors < [MAX_ERRORS]; warnings < [MAX_WARNINGS]; suggestions < [MAX_SUGGESTIONS];
+      Example: errors < 1; warnings < 5; suggestions < 10;
+      Order of checks and separators does not matter.
+      Pass condition will be satisfied only when ALL checks are satisfied.
+    required: false
+
   debug:
     description: "Log debugging information to stdout"
     required: false

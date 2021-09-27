@@ -4,6 +4,7 @@ import * as exec from '@actions/exec';
 import * as fs from 'fs';
 import {isMatch} from 'micromatch';
 import * as request from 'request-promise-native';
+import {FileResult} from 'tmp';
 import {modifiedFiles, GHFile} from './git';
 
 /**
@@ -38,7 +39,11 @@ function logIfDebug(msg: string) {
 /**
  * Parse our user input and set up our Vale environment.
  */
-export async function get(tmp: any, tok: string, dir: string): Promise<Input> {
+export async function get(
+  tmpFile: FileResult,
+  token: string,
+  dir: string
+): Promise<Input> {
   let modified: Record<string, GHFile> = {};
 
   // Get the current version of Vale:
@@ -67,10 +72,10 @@ export async function get(tmp: any, tok: string, dir: string): Promise<Input> {
       })
       .then(body => {
         try {
-          fs.writeFileSync(tmp.name, body);
+          fs.writeFileSync(tmpFile.name, body);
           logIfDebug(`Successfully fetched remote config.`);
           args.push('--mode-rev-compat');
-          args.push(`--config=${tmp.name}`);
+          args.push(`--config=${tmpFile.name}`);
         } catch (e) {
           core.warning(`Failed to write config: ${e}.`);
         }
@@ -85,6 +90,7 @@ export async function get(tmp: any, tok: string, dir: string): Promise<Input> {
         .split('/')
         .slice(-1)[0]
         .split('.zip')[0];
+
       logIfDebug(`Installing style '${name}' ...`);
 
       let cmd = ['install', name, style];
@@ -93,7 +99,7 @@ export async function get(tmp: any, tok: string, dir: string): Promise<Input> {
       }
       let stderr = '';
 
-      let resp = await exec.exec('vale', cmd, {
+      const resp = await exec.exec('vale', cmd, {
         cwd: dir,
         listeners: {
           stderr: (data: Buffer) => {
@@ -112,28 +118,33 @@ export async function get(tmp: any, tok: string, dir: string): Promise<Input> {
   const exclude = core.getInput('exclude') ?? '!*';
   const excludePatterns = exclude.split('\n');
 
-  let payload = await modifiedFiles();
   let names = new Set<string>();
 
-  payload.forEach(file => {
-    logIfDebug(`FileName: ${file.name}, Excludepatterns: ${excludePatterns}`);
-    if (fs.existsSync(file.name) && !isMatch(file.name, excludePatterns)) {
-      names.add(file.name);
-      modified[file.name] = file;
+  for (const modifiedFile of await modifiedFiles()) {
+    logIfDebug(
+      `FileName: ${modifiedFile.name}, Exclude patterns: ${excludePatterns}`
+    );
+
+    if (
+      fs.existsSync(modifiedFile.name) &&
+      !isMatch(modifiedFile.name, excludePatterns)
+    ) {
+      names.add(modifiedFile.name);
+      modified[modifiedFile.name] = modifiedFile;
     }
-  });
+  }
 
   if (names.size === 0) {
     core.warning(`No files matched; falling back to 'none'.`);
     args.push('.git/HEAD');
   } else {
-    args = args.concat(Array.from(names));
+    args = [...args, ...names];
   }
 
-  logIfDebug(`Vale set-up comeplete; using '${args}'.`);
+  logIfDebug(`Vale set-up complete; using '${args}'.`);
 
   return {
-    token: tok,
+    token: token,
     workspace: dir,
     args: args,
     version: version,

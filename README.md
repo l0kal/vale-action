@@ -36,6 +36,10 @@ jobs:
         exclude: |
           !.github/**/*
           !README.md
+
+        # optional
+        passCondition: |
+          errors < 1;
       env:
         # Required
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

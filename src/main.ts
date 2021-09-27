@@ -1,11 +1,11 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 import * as tmp from 'tmp';
+import execa from 'execa';
 
 import {CheckRunner} from './check';
 import * as input from './input';
-
-import execa from 'execa';
+import { checkPassed } from './check-passed';
 
 /**
  * These environment variables are exposed for GitHub Actions.
@@ -19,12 +19,11 @@ export async function run(actionInput: input.Input): Promise<void> {
     const startedAt = new Date().toISOString();
     const alertResp = await execa('vale', actionInput.args);
 
-    let runner = new CheckRunner(actionInput.files);
+    const runner = new CheckRunner(actionInput.files);
 
-    let sha = github.context.sha;
-    if (github.context.payload.pull_request) {
-      sha = github.context.payload.pull_request.head.sha;
-    }
+    const sha = github.context.payload.pull_request
+      ? github.context.payload.pull_request.head.sha
+      : github.context.sha;
 
     runner.makeAnnotations(alertResp.stdout);
     await runner.executeCheck({
@@ -36,6 +35,15 @@ export async function run(actionInput: input.Input): Promise<void> {
       started_at: startedAt,
       context: {vale: actionInput.version}
     });
+
+    const passCondition = core.getInput('passCondition') ?? '';
+    const result = runner.getCheckResult();
+
+    if (!checkPassed(result, passCondition)) {
+      core.setFailed(
+        `Pass condition was not satisfied: ${passCondition}`
+      );
+    }
   } catch (error) {
     core.setFailed(error.stderr);
   }
@@ -46,12 +54,12 @@ async function main(): Promise<void> {
     const userToken = GITHUB_TOKEN as string;
     const workspace = GITHUB_WORKSPACE as string;
 
-    const tmpobj = tmp.fileSync({postfix: '.ini', dir: workspace});
-    const actionInput = await input.get(tmpobj, userToken, workspace);
+    const tmpFile = tmp.fileSync({postfix: '.ini', dir: workspace});
+    const actionInput = await input.get(tmpFile, userToken, workspace);
 
     await run(actionInput);
 
-    tmpobj.removeCallback();
+    tmpFile.removeCallback();
   } catch (error) {
     core.setFailed(error.message);
   }
