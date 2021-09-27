@@ -115,7 +115,7 @@ export async function get(
   }
 
   // List of exclude files
-  const exclude = core.getInput('exclude') ?? '!*';
+  const exclude = core.getInput('exclude') || '!*';
   const excludePatterns = exclude.split('\n');
 
   let names = new Set<string>();

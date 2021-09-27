@@ -36,7 +36,7 @@ export async function run(actionInput: input.Input): Promise<void> {
       context: {vale: actionInput.version}
     });
 
-    const passCondition = core.getInput('passCondition') ?? '';
+    const passCondition = core.getInput('passCondition');
     const result = runner.getCheckResult();
 
     if (!checkPassed(result, passCondition)) {
